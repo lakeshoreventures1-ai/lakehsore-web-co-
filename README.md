@@ -30,11 +30,12 @@ confirmation email to `lakeshoreventures1@gmail.com` with an "Activate Form" lin
 Until that link is clicked, submissions won't be delivered — so send a test
 submission through the live site once and confirm it from that inbox.
 
-## Custom domain (lakeshorewebco.com)
+## Custom domain
 
-The `CNAME` file tells GitHub Pages to serve the site at `lakeshorewebco.com`.
-For it to actually resolve, add these DNS records at your domain registrar
-(wherever `lakeshorewebco.com` was purchased):
+There's no custom domain yet — the site lives at
+`https://lakeshoreventures1-ai.github.io/lakehsore-web-co-/`. If a domain is
+purchased later (e.g. `lakeshorewebco.com`), add a `CNAME` file to the repo
+root containing just the domain, add these DNS records at the registrar:
 
 | Type  | Host/Name | Value                              |
 |-------|-----------|-------------------------------------|
@@ -44,15 +45,15 @@ For it to actually resolve, add these DNS records at your domain registrar
 | A     | @         | 185.199.111.153                     |
 | CNAME | www       | lakeshoreventures1-ai.github.io.    |
 
-DNS changes can take anywhere from a few minutes to ~24 hours to propagate.
-Once it does, GitHub automatically issues an HTTPS certificate for the domain
-(check Settings → Pages in the repo — it'll show "DNS check successful" and
-an option to enforce HTTPS).
+and update the URLs in `robots.txt`, `sitemap.xml`, and `index.html`
+(canonical link + JSON-LD) to the new domain. DNS changes can take a few
+minutes to ~24 hours to propagate; GitHub then auto-issues an HTTPS
+certificate (check Settings → Pages in the repo for "DNS check successful").
 
 ## SEO
 
 - `robots.txt` and `sitemap.xml` help search engines crawl and index the site.
 - `index.html` includes a canonical URL and `ProfessionalService` structured
   data (JSON-LD) so Google can show richer results (phone, service area, etc.).
-- Both files reference `https://lakeshorewebco.com/` — update them if the
-  domain ever changes.
+- All three currently point at the github.io URL above — update them if a
+  custom domain is added later.

@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://lakeshorewebco.com/sitemap.xml
+Sitemap: https://lakeshoreventures1-ai.github.io/lakehsore-web-co-/sitemap.xml
