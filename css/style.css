@@ -223,6 +223,96 @@ button{ font-family: inherit; }
   font-size: 1.05rem;
 }
 
+/* ---------- Missed Call Text Back ---------- */
+.mct-inner{
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 60px;
+  align-items: center;
+}
+.mct-copy .section-sub{ margin: 14px 0 30px; text-align: left; }
+.mct-benefits{ display: flex; flex-direction: column; gap: 18px; margin-bottom: 34px; }
+.mct-benefits li{ display: flex; gap: 14px; align-items: flex-start; }
+.mct-check{
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--teal-500);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-top: 2px;
+}
+.mct-benefits strong{ display: block; color: var(--teal-900); font-size: 1rem; margin-bottom: 2px; }
+.mct-benefits p{ color: var(--ink-soft); font-size: 0.92rem; }
+
+.phone-mock{
+  width: 280px;
+  margin: 0 auto;
+  background: var(--teal-900);
+  border-radius: 34px;
+  padding: 14px;
+  box-shadow: var(--shadow);
+}
+.phone-notch{
+  width: 80px;
+  height: 18px;
+  background: #000;
+  border-radius: 0 0 12px 12px;
+  margin: 0 auto 8px;
+}
+.phone-screen{
+  background: var(--bg);
+  border-radius: 22px;
+  padding: 18px 14px 22px;
+  min-height: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.chat-header{
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--teal-900);
+  text-align: center;
+  font-size: 0.9rem;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 4px;
+}
+.chat-bubble{
+  max-width: 85%;
+  padding: 10px 14px;
+  border-radius: 16px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+.chat-bubble.missed{
+  align-self: center;
+  color: var(--ink-soft);
+  font-size: 0.75rem;
+  text-align: center;
+  max-width: 100%;
+  padding: 2px 0;
+}
+.chat-bubble.out{
+  align-self: flex-end;
+  background: var(--teal-500);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+.chat-bubble.in{
+  align-self: flex-start;
+  background: var(--card);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  border-bottom-left-radius: 4px;
+}
+
 /* ---------- Sections ---------- */
 .section{ padding: 96px 0; }
 .section-alt{ background: var(--bg-alt); }
@@ -233,7 +323,7 @@ button{ font-family: inherit; }
 .grid{ display: grid; gap: 26px; }
 
 /* Services */
-.services-grid{ grid-template-columns: repeat(3, 1fr); }
+.services-grid{ grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
 .card{
   background: var(--card);
   border: 1px solid var(--line);
@@ -255,6 +345,23 @@ button{ font-family: inherit; }
 .card-icon svg{ width: 24px; height: 24px; fill: none; stroke: #fff; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
 .card h3{ font-size: 1.15rem; margin-bottom: 8px; }
 .card p{ color: var(--ink-soft); font-size: 0.96rem; }
+
+.card-featured{
+  border-color: var(--teal-500);
+  background: linear-gradient(160deg, rgba(46,154,160,0.1), var(--card) 65%);
+}
+.card-badge{
+  display: inline-block;
+  margin-top: 14px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--coral);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
 
 /* Work */
 .work-grid{ grid-template-columns: repeat(4, 1fr); }
@@ -383,7 +490,7 @@ button{ font-family: inherit; }
 }
 .form-row{ margin-bottom: 18px; display: flex; flex-direction: column; gap: 6px; }
 .form-row label{ font-weight: 700; font-size: 0.88rem; color: var(--teal-900); }
-.form-row input, .form-row textarea{
+.form-row input, .form-row textarea, .form-row select{
   border: 1.5px solid var(--line);
   border-radius: var(--radius-sm);
   padding: 12px 14px;
@@ -393,7 +500,8 @@ button{ font-family: inherit; }
   color: var(--ink);
   resize: vertical;
 }
-.form-row input:focus, .form-row textarea:focus{
+.form-row select{ appearance: auto; }
+.form-row input:focus, .form-row textarea:focus, .form-row select:focus{
   outline: none;
   border-color: var(--teal-500);
   box-shadow: 0 0 0 3px rgba(28,124,130,0.15);
@@ -440,9 +548,10 @@ button{ font-family: inherit; }
 /* ---------- Responsive ---------- */
 @media (max-width: 980px){
   .services-grid, .work-grid, .testimonial-grid, .steps{ grid-template-columns: repeat(2, 1fr); }
-  .about-inner, .contact-inner{ grid-template-columns: 1fr; }
+  .about-inner, .contact-inner, .mct-inner{ grid-template-columns: 1fr; }
   .about-visual{ order: -1; }
   .about-card{ max-width: 360px; margin: 0 auto; }
+  .mct-visual{ order: -1; }
 }
 
 @media (max-width: 760px){
