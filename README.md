@@ -22,6 +22,10 @@ Then open http://localhost:8080
 
 ## Notes
 
-The contact form currently validates and shows a confirmation message client-side only.
-To actually receive submissions, wire the form up to a backend/service such as
-Formspree, Netlify Forms, or a custom API endpoint.
+The contact form submits to [FormSubmit.co](https://formsubmit.co), which emails
+submissions to `lakeshoreventures1@gmail.com` — no backend or API key required.
+
+**One-time setup:** the first time the form is submitted, FormSubmit sends a
+confirmation email to `lakeshoreventures1@gmail.com` with an "Activate Form" link.
+Until that link is clicked, submissions won't be delivered — so send a test
+submission through the live site once and confirm it from that inbox.

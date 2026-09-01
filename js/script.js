@@ -33,7 +33,7 @@
     });
   }
 
-  // Contact form (client-side only demo handling)
+  // Contact form — submits to FormSubmit.co, which emails the inbox configured in the form's action
   var form = document.getElementById("contactForm");
   var formNote = document.getElementById("formNote");
 
@@ -48,9 +48,37 @@
         return;
       }
 
-      formNote.textContent = "Thanks! Your message has been received — we'll be in touch within one business day.";
-      formNote.style.color = "#1c7c82";
-      form.reset();
+      // Honeypot: if a bot filled this hidden field, silently drop the submission
+      if (form._honey && form._honey.value) return;
+
+      var submitBtn = form.querySelector("button[type=submit]");
+      if (submitBtn) submitBtn.disabled = true;
+      formNote.textContent = "Sending...";
+      formNote.style.color = "#3c5a5e";
+
+      var controller = new AbortController();
+      var timeoutId = setTimeout(function () { controller.abort(); }, 15000);
+
+      fetch(form.action, {
+        method: "POST",
+        headers: { Accept: "application/json" },
+        body: new FormData(form),
+        signal: controller.signal,
+      })
+        .then(function (response) {
+          if (!response.ok) throw new Error("Request failed");
+          formNote.textContent = "Thanks! Your message has been sent — we'll be in touch within one business day.";
+          formNote.style.color = "#1c7c82";
+          form.reset();
+        })
+        .catch(function () {
+          formNote.textContent = "Something went wrong sending your message. Please email us directly at lakeshoreventures1@gmail.com.";
+          formNote.style.color = "#e8734a";
+        })
+        .finally(function () {
+          clearTimeout(timeoutId);
+          if (submitBtn) submitBtn.disabled = false;
+        });
     });
   }
 })();
