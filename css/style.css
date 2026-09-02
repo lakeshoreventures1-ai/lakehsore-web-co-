@@ -488,6 +488,16 @@ button{ font-family: inherit; }
 }
 .form-note{ margin-top: 14px; font-size: 0.9rem; font-weight: 600; min-height: 1.2em; color: var(--teal-500); }
 
+/* ---------- Legal pages ---------- */
+.legal-content{ max-width: 720px; margin: 0 auto; }
+.legal-content h1{ font-size: clamp(2rem, 4vw, 2.6rem); font-weight: 600; margin: 10px 0 6px; }
+.legal-updated{ color: var(--ink-soft); font-size: 0.9rem; margin-bottom: 34px; }
+.legal-content h2{ font-size: 1.25rem; font-weight: 600; margin: 34px 0 12px; }
+.legal-content p{ color: var(--ink-soft); margin-bottom: 14px; }
+.legal-content ul{ margin: 0 0 14px; padding-left: 22px; list-style: disc; }
+.legal-content li{ color: var(--ink-soft); margin-bottom: 8px; }
+.legal-content a{ color: var(--teal-500); font-weight: 600; text-decoration: underline; }
+
 /* ---------- Footer ---------- */
 .site-footer{ background: var(--teal-900); color: rgba(255,255,255,0.75); padding: 40px 0; }
 .footer-inner{
