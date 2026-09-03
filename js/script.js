@@ -69,6 +69,9 @@
           if (!response.ok) throw new Error("Request failed");
           formNote.textContent = "Thanks! Your message has been sent — we'll be in touch within one business day.";
           formNote.style.color = "#1c7c82";
+          if (typeof gtag === "function") {
+            gtag("event", "generate_lead", { form_id: "contactForm" });
+          }
           form.reset();
         })
         .catch(function () {
