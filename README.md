@@ -22,13 +22,16 @@ Then open http://localhost:8080
 
 ## Notes
 
-The contact form submits to [FormSubmit.co](https://formsubmit.co), which emails
-submissions to `lakeshoreventures1@gmail.com` — no backend or API key required.
+The contact form submits to [Web3Forms](https://web3forms.com), which emails
+submissions to `lakeshoreventures1@gmail.com` using an access key embedded in
+the form (no backend required). No activation step needed — it works
+immediately, unlike the previous FormSubmit.co integration (switched away
+from in November 2026 after a multi-day FormSubmit outage silently dropped
+submissions).
 
-**One-time setup:** the first time the form is submitted, FormSubmit sends a
-confirmation email to `lakeshoreventures1@gmail.com` with an "Activate Form" link.
-Until that link is clicked, submissions won't be delivered — so send a test
-submission through the live site once and confirm it from that inbox.
+If the access key ever needs to be rotated, generate a new one at
+web3forms.com with the same email and swap the `value` on the form's
+`access_key` hidden input in `index.html`.
 
 ## Custom domain
 

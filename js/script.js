@@ -33,7 +33,7 @@
     });
   }
 
-  // Contact form — submits to FormSubmit.co, which emails the inbox configured in the form's action
+  // Contact form — submits to Web3Forms, which emails the inbox tied to the access key
   var form = document.getElementById("contactForm");
   var formNote = document.getElementById("formNote");
 
@@ -48,8 +48,8 @@
         return;
       }
 
-      // Honeypot: if a bot filled this hidden field, silently drop the submission
-      if (form._honey && form._honey.value) return;
+      // Honeypot: if a bot checked this hidden field, silently drop the submission
+      if (form.botcheck && form.botcheck.checked) return;
 
       var submitBtn = form.querySelector("button[type=submit]");
       if (submitBtn) submitBtn.disabled = true;
@@ -66,13 +66,15 @@
         signal: controller.signal,
       })
         .then(function (response) {
-          if (!response.ok) throw new Error("Request failed");
-          formNote.textContent = "Thanks! Your message has been sent — we'll be in touch within one business day.";
-          formNote.style.color = "#1c7c82";
-          if (typeof gtag === "function") {
-            gtag("event", "generate_lead", { form_id: "contactForm" });
-          }
-          form.reset();
+          return response.json().then(function (data) {
+            if (!response.ok || !data.success) throw new Error("Request failed");
+            formNote.textContent = "Thanks! Your message has been sent — we'll be in touch within one business day.";
+            formNote.style.color = "#1c7c82";
+            if (typeof gtag === "function") {
+              gtag("event", "generate_lead", { form_id: "contactForm" });
+            }
+            form.reset();
+          });
         })
         .catch(function () {
           formNote.textContent = "Something went wrong sending your message. Please email us directly at lakeshoreventures1@gmail.com.";
