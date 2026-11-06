@@ -40,10 +40,12 @@ web3forms.com with the same email and swap the `value` on the form's
 
 ## Custom domain
 
-There's no custom domain yet — the site lives at
-`https://lakeshoreventures1-ai.github.io/lakehsore-web-co-/`. If a domain is
-purchased later (e.g. `cnddigital.com`), add a `CNAME` file to the repo
-root containing just the domain, add these DNS records at the registrar:
+The site's primary domain is **cnddigital.org** (set via the `CNAME` file in
+the repo root). Once DNS has propagated and GitHub's "DNS check successful"
+shows in Settings → Pages, the old `lakeshoreventures1-ai.github.io/...` URL
+automatically redirects here — no links break.
+
+DNS records needed at the registrar:
 
 | Type  | Host/Name | Value                              |
 |-------|-----------|-------------------------------------|
@@ -53,15 +55,13 @@ root containing just the domain, add these DNS records at the registrar:
 | A     | @         | 185.199.111.153                     |
 | CNAME | www       | lakeshoreventures1-ai.github.io.    |
 
-and update the URLs in `robots.txt`, `sitemap.xml`, and `index.html`
-(canonical link + JSON-LD) to the new domain. DNS changes can take a few
-minutes to ~24 hours to propagate; GitHub then auto-issues an HTTPS
-certificate (check Settings → Pages in the repo for "DNS check successful").
+DNS changes can take a few minutes to ~24 hours to propagate; GitHub then
+auto-issues an HTTPS certificate.
 
 ## SEO
 
 - `robots.txt` and `sitemap.xml` help search engines crawl and index the site.
 - `index.html` includes a canonical URL and `ProfessionalService` structured
   data (JSON-LD) so Google can show richer results (phone, service area, etc.).
-- All three currently point at the github.io URL above — update them if a
-  custom domain is added later.
+- All three point at `https://cnddigital.org/` — update them if the domain
+  ever changes again.
