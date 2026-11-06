@@ -1,8 +1,13 @@
-# Lakeshore Web Co.
+# CND Digital
 
-Marketing website for Lakeshore Web Co., a web design & development studio.
+Marketing website for CND Digital, a web design & development studio.
 
 Static site — plain HTML, CSS, and JS, no build step or dependencies.
+
+Note: the repo, GitHub Pages URL, email address, and Calendly link still use
+the original "lakeshore" naming — those are technical identifiers tied to
+existing accounts and weren't renamed along with the public brand (CND
+Digital). Nothing customer-facing shows "Lakeshore" anywhere.
 
 ## Structure
 
@@ -37,7 +42,7 @@ web3forms.com with the same email and swap the `value` on the form's
 
 There's no custom domain yet — the site lives at
 `https://lakeshoreventures1-ai.github.io/lakehsore-web-co-/`. If a domain is
-purchased later (e.g. `lakeshorewebco.com`), add a `CNAME` file to the repo
+purchased later (e.g. `cnddigital.com`), add a `CNAME` file to the repo
 root containing just the domain, add these DNS records at the registrar:
 
 | Type  | Host/Name | Value                              |
