@@ -1,0 +1,19 @@
+{
+  "name": "cnd-digital-onboarding",
+  "version": "0.1.0",
+  "description": "Missed Call Text Back onboarding + webhook backend for CND Digital",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.7.0",
+    "cheerio": "^1.1.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "twilio": "^5.4.0",
+    "zod": "^3.25.76"
+  }
+}
