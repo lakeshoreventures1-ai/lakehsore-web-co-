@@ -33,6 +33,19 @@
     });
   }
 
+  // Calendly booking completed — fire the Whop conversion event for ad attribution
+  window.addEventListener("message", function (e) {
+    if (
+      e.origin === "https://calendly.com" &&
+      e.data &&
+      e.data.event === "calendly.event_scheduled"
+    ) {
+      if (typeof whop !== "undefined" && typeof whop.track === "function") {
+        whop.track("schedule");
+      }
+    }
+  });
+
   // Contact form — submits to Web3Forms, which emails the inbox tied to the access key
   var form = document.getElementById("contactForm");
   var formNote = document.getElementById("formNote");
