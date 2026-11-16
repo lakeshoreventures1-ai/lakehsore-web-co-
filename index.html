@@ -361,6 +361,10 @@
           <input type="text" id="business" name="business" autocomplete="organization">
         </div>
         <div class="form-row">
+          <label for="phone">Phone</label>
+          <input type="tel" id="phone" name="phone" autocomplete="tel">
+        </div>
+        <div class="form-row">
           <label for="interest">I'm interested in</label>
           <select id="interest" name="interest">
             <option value="text-back">Missed Call Text Back</option>
@@ -371,6 +375,15 @@
         <div class="form-row">
           <label for="message">Tell us about your project</label>
           <textarea id="message" name="message" rows="5" required></textarea>
+        </div>
+        <div class="form-row form-row-checkbox">
+          <label class="checkbox-label">
+            <input type="checkbox" id="smsOptIn" name="sms_optin" value="yes">
+            I'd like to receive text messages from CND Digital about my inquiry. Message
+            and data rates may apply. Message frequency varies. Reply STOP to opt out,
+            HELP for help. See our <a href="privacy.html">Privacy Policy</a> and
+            <a href="terms.html">Terms &amp; Conditions</a>.
+          </label>
         </div>
         <button type="submit" class="btn btn-primary btn-block">Get My Free Quote</button>
         <p class="form-note" id="formNote" role="status" aria-live="polite"></p>
@@ -395,6 +408,7 @@
       <a href="#book-a-call">Book a Call</a>
       <a href="#contact">Contact</a>
       <a href="privacy.html">Privacy Policy</a>
+      <a href="terms.html">Terms &amp; Conditions</a>
     </nav>
     <p class="footer-copy">&copy; <span id="year"></span> CND Digital. All rights reserved.</p>
   </div>
