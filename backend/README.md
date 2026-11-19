@@ -26,7 +26,7 @@ generated persona + the live conversation) to keep the conversation going.
 Multiple clients' calls land on this one service. The only way to tell which
 business an inbound call/text belongs to is the Twilio number it arrived on
 (`To`), so onboarding buys a fresh number per client rather than sharing one.
-At ~$1/month per number this is cheap relative to the $197/mo you're charging.
+At ~$1/month per number this is cheap relative to the $249/mo you're charging.
 
 ## Setup
 
