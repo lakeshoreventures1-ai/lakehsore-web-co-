@@ -1,6 +1,16 @@
 import Twilio from "twilio";
 
-const client = Twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+let _client;
+const client = new Proxy(
+  {},
+  {
+    get(_t, prop) {
+      // Created on first use so the server can boot (e.g. to serve demo pages) before Twilio is configured.
+      _client ??= Twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+      return _client[prop];
+    },
+  },
+);
 
 function areaCodeFromPhone(phone) {
   const digits = phone.replace(/\D/g, "");
@@ -15,6 +25,11 @@ function areaCodeFromPhone(phone) {
  * matched back to the right business.
  */
 export async function provisionNumberForClient(existingPhone) {
+  if (!process.env.TWILIO_ACCOUNT_SID || !process.env.TWILIO_AUTH_TOKEN) {
+    // Checked up front: the Twilio SDK throws outside the promise chain when
+    // credentials are missing, which would crash the whole server.
+    throw new Error("TWILIO_ACCOUNT_SID / TWILIO_AUTH_TOKEN are not set.");
+  }
   const baseUrl = process.env.PUBLIC_BASE_URL;
   if (!baseUrl) {
     throw new Error("PUBLIC_BASE_URL is not set - deploy this service first, then set it.");
@@ -53,4 +68,10 @@ export async function provisionNumberForClient(existingPhone) {
 
 export async function sendSms({ from, to, body }) {
   return client.messages.create({ from, to, body });
+}
+
+/** Release a client's dedicated number (e.g. when they cancel) so it stops billing. */
+export async function releaseNumber(phoneNumber) {
+  const [match] = await client.incomingPhoneNumbers.list({ phoneNumber, limit: 1 });
+  if (match) await client.incomingPhoneNumbers(match.sid).remove();
 }

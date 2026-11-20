@@ -1,10 +1,28 @@
 import { Router } from "express";
 import Twilio from "twilio";
-import { getClientByTwilioNumber, getConversation, appendConversation } from "../lib/store.js";
+import { getClientByTwilioNumber, getConversation, appendConversation, logEvent } from "../lib/store.js";
 import { sendSms } from "../lib/twilio.js";
 import { replyAsBusiness } from "../lib/claude.js";
 
 export const webhooksRouter = Router();
+
+/**
+ * Reject requests that weren't signed by Twilio, so nobody can hit these
+ * endpoints directly and make the account send texts. Skipped only when
+ * TWILIO_SKIP_SIGNATURE=1 (local testing).
+ */
+function verifyTwilio(req, res, next) {
+  if (process.env.TWILIO_SKIP_SIGNATURE === "1") return next();
+  const url = `${process.env.PUBLIC_BASE_URL}${req.originalUrl}`;
+  const ok = Twilio.validateRequest(
+    process.env.TWILIO_AUTH_TOKEN || "",
+    req.get("x-twilio-signature") || "",
+    url,
+    req.body || {},
+  );
+  if (!ok) return res.status(403).send("Invalid Twilio signature");
+  next();
+}
 
 /**
  * POST /webhooks/twilio/voice
@@ -14,7 +32,7 @@ export const webhooksRouter = Router();
  * call here is a missed call. Immediately text the caller back as the
  * business, then end the call.
  */
-webhooksRouter.post("/webhooks/twilio/voice", async (req, res) => {
+webhooksRouter.post("/webhooks/twilio/voice", verifyTwilio, async (req, res) => {
   const { From: callerNumber, To: twilioNumber } = req.body;
   const client = getClientByTwilioNumber(twilioNumber);
 
@@ -25,6 +43,7 @@ webhooksRouter.post("/webhooks/twilio/voice", async (req, res) => {
         role: "assistant",
         content: client.missedCallText,
       });
+      logEvent({ type: "missed_call", twilioNumber, caller: callerNumber });
     } catch (err) {
       console.error("[voice webhook] failed to send missed-call text:", err);
     }
@@ -43,7 +62,7 @@ webhooksRouter.post("/webhooks/twilio/voice", async (req, res) => {
  * Handles the caller's replies after the initial missed-call text, using
  * Claude with the client's generated persona + recent conversation history.
  */
-webhooksRouter.post("/webhooks/twilio/sms", async (req, res) => {
+webhooksRouter.post("/webhooks/twilio/sms", verifyTwilio, async (req, res) => {
   const { From: callerNumber, To: twilioNumber, Body: body } = req.body;
   const client = getClientByTwilioNumber(twilioNumber);
 
@@ -60,6 +79,7 @@ webhooksRouter.post("/webhooks/twilio/sms", async (req, res) => {
     const reply = await replyAsBusiness(client.systemPrompt, history, body);
 
     appendConversation(twilioNumber, callerNumber, { role: "user", content: body });
+    logEvent({ type: "caller_reply", twilioNumber, caller: callerNumber });
     appendConversation(twilioNumber, callerNumber, { role: "assistant", content: reply });
 
     twiml.message(reply);

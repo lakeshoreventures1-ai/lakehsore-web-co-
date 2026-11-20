@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Start Your Free Trial | CND Digital</title>
+<meta name="description" content="Turn on Missed Call Text Back for your business in about a minute. 30 days free, then $249/month. Keep your current number.">
+<link rel="canonical" href="https://cnddigital.org/start.html">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Fraunces:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .start-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start}
+  @media(max-width:820px){.start-grid{grid-template-columns:1fr;gap:28px}}
+  .start-list{list-style:none;padding:0;margin:24px 0}
+  .start-list li{padding:10px 0 10px 32px;position:relative}
+  .start-list li::before{content:"✓";position:absolute;left:0;top:10px;font-weight:800;color:#1f9e8f}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a href="index.html" class="logo"><span class="logo-text">CND<em>&nbsp;Digital</em></span></a>
+  </div>
+</header>
+<main class="section">
+  <div class="wrap start-grid">
+    <div>
+      <p class="eyebrow">Missed Call Text Back</p>
+      <h1>Turn it on in about a minute.</h1>
+      <p class="section-sub">Tell us about your business. We write your text from your own website, set up your text-back line, and email you a single code to dial. That's the whole setup.</p>
+      <ul class="start-list">
+        <li><strong>30 days free,</strong> then $249/month</li>
+        <li>If it doesn't win back a job you'd have missed, cancel and pay nothing</li>
+        <li>Keep your current phone number and voicemail</li>
+        <li>No setup fee, no contract, cancel anytime</li>
+      </ul>
+    </div>
+    <form class="contact-form" id="startForm" novalidate>
+      <div class="form-row"><label for="businessName">Business name</label><input id="businessName" name="businessName" required autocomplete="organization"></div>
+      <div class="form-row"><label for="phone">Business phone (the one customers call)</label><input id="phone" name="phone" type="tel" required autocomplete="tel"></div>
+      <div class="form-row"><label for="website">Website (optional, we use it to write your text)</label><input id="website" name="website" type="url" placeholder="https://" autocomplete="url"></div>
+      <div class="form-row"><label for="email">Email for your setup instructions</label><input id="email" name="email" type="email" required autocomplete="email"></div>
+      <button type="submit" class="btn btn-primary btn-block">Continue to secure checkout</button>
+      <p class="form-note" id="startNote" role="status" aria-live="polite">You won't be charged today.</p>
+    </form>
+  </div>
+</main>
+<footer class="site-footer"><div class="wrap footer-inner">
+  <nav class="footer-nav" aria-label="Footer"><a href="index.html">Home</a><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms &amp; Conditions</a></nav>
+</div></footer>
+<script src="js/config.js"></script>
+<script>
+(function () {
+  var form = document.getElementById("startForm");
+  var note = document.getElementById("startNote");
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+    if (!window.CND_API) { window.location.href = "index.html#book-a-call"; return; }
+    var btn = form.querySelector("button");
+    btn.disabled = true;
+    note.textContent = "Opening secure checkout...";
+    var url = form.website.value.trim();
+    if (url && !/^https?:\/\//i.test(url)) url = "https://" + url;
+    fetch(window.CND_API + "/api/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ businessName: form.businessName.value.trim(), phone: form.phone.value.trim(), website: url, email: form.email.value.trim() })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (d) { if (d.url) { window.location.href = d.url; } else { throw new Error(); } })
+      .catch(function () {
+        btn.disabled = false;
+        note.textContent = "Something went wrong. Email charlie@cnddigital.org and we'll set you up today.";
+      });
+  });
+})();
+</script>
+</body>
+</html>

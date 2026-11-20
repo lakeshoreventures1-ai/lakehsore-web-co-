@@ -1,50 +1,26 @@
 import { Router } from "express";
-import { scrapeWebsiteText } from "../lib/scrape.js";
-import { extractBusinessProfile, generatePersona } from "../lib/claude.js";
-import { provisionNumberForClient } from "../lib/twilio.js";
-import { forwardingInstructions } from "../lib/forwarding.js";
-import { saveClient } from "../lib/store.js";
+import { requireAdmin } from "../lib/auth.js";
+import { onboardBusiness } from "../lib/onboarding.js";
 
 export const onboardRouter = Router();
 
 /**
- * POST /api/onboard
- * Body: { businessName, phone, website }
+ * POST /api/onboard  (admin only)
+ * Body: { businessName, phone, website?, email? }
  *
- * Runs the whole pipeline: scrape -> extract profile -> generate persona ->
- * buy + configure a dedicated Twilio number -> save the client -> return
- * the forwarding instructions to hand to the client.
+ * Manual onboarding for clients who pay outside Stripe checkout. Paying
+ * customers who use the self-serve checkout are onboarded automatically by
+ * the Stripe webhook instead.
  */
-onboardRouter.post("/api/onboard", async (req, res) => {
-  const { businessName, phone, website } = req.body ?? {};
+onboardRouter.post("/api/onboard", requireAdmin, async (req, res) => {
+  const { businessName, phone, website, email } = req.body ?? {};
 
   if (!businessName || !phone) {
     return res.status(400).json({ error: "businessName and phone are required." });
   }
 
   try {
-    const scrapedText = website ? await scrapeWebsiteText(website) : "";
-    const profile = await extractBusinessProfile(businessName, scrapedText);
-    const persona = await generatePersona({ businessName, phone, profile });
-
-    const twilioNumber = await provisionNumberForClient(phone);
-
-    saveClient(twilioNumber, {
-      businessName,
-      phone,
-      website: website ?? null,
-      profile,
-      missedCallText: persona.missed_call_text,
-      systemPrompt: persona.system_prompt,
-      createdAt: new Date().toISOString(),
-    });
-
-    res.json({
-      businessName,
-      twilioNumber,
-      missedCallText: persona.missed_call_text,
-      forwarding: forwardingInstructions(twilioNumber),
-    });
+    res.json(await onboardBusiness({ businessName, phone, website, email }));
   } catch (err) {
     console.error("[onboard] failed:", err);
     res.status(500).json({ error: "Onboarding failed", detail: String(err.message ?? err) });

@@ -119,3 +119,87 @@ export async function replyAsBusiness(systemPrompt, history, newMessage) {
 
   return response.content.find((b) => b.type === "text")?.text ?? "Thanks — we'll get back to you shortly!";
 }
+
+const DemoSchema = z.object({
+  niche: z
+    .string()
+    .describe(
+      "One of: plumbing, hvac, electrical, roofing, landscaping, cleaning, pest_control, auto_repair, dental, med_spa, salon, law, real_estate, contractor, other",
+    ),
+  sample_conversation: z
+    .array(z.object({ from: z.enum(["caller", "business"]), text: z.string() }))
+    .describe(
+      "A realistic 4-6 message SMS exchange that starts right after the missed-call text: a likely customer asks about a real service this business offers, and the business replies helpfully using only facts from the profile, ending with a booked appointment or a clear next step",
+    ),
+});
+
+/**
+ * Build everything a personalized demo page needs for one prospect: their
+ * business profile, their own missed-call text + AI persona (the exact one
+ * they'll get if they sign up), and a sample conversation.
+ */
+export async function generateDemo({ businessName, phone, scrapedText }) {
+  const profile = await extractBusinessProfile(businessName, scrapedText);
+  const persona = await generatePersona({ businessName, phone, profile });
+
+  const response = await client.messages.parse({
+    model: MODEL,
+    max_tokens: 1500,
+    output_config: { effort: "low", format: zodOutputFormat(DemoSchema) },
+    messages: [
+      {
+        role: "user",
+        content: [
+          `Business: ${businessName}`,
+          `Profile: ${JSON.stringify(profile)}`,
+          `The missed-call text they send: "${persona.missed_call_text}"`,
+          "",
+          "Classify the business niche and write the sample conversation that follows that text.",
+          "Keep each message SMS-length. Never invent prices, hours or services not in the profile.",
+        ].join("\n"),
+      },
+    ],
+  });
+
+  const demo = response.parsed_output ?? { niche: "other", sample_conversation: [] };
+  return { profile, persona, niche: demo.niche, sampleConversation: demo.sample_conversation };
+}
+
+/** Short, personal cold-email opener referencing something real from their site. */
+export async function writeOutreachEmail({ businessName, firstName, city, profile, demoUrl }) {
+  const response = await client.messages.create({
+    model: MODEL,
+    max_tokens: 600,
+    output_config: { effort: "low" },
+    system:
+      "You write short, plain-text cold emails for a small agency selling Missed Call Text Back to local businesses. " +
+      "Rules: under 90 words, no hype, no exclamation marks, no fake claims or made-up statistics, one specific detail " +
+      "about their business from the profile, end with a soft yes/no question. Output ONLY JSON with keys 'subject' (under 6 words, lowercase) and 'body'. " +
+      "Do not include a signature or unsubscribe line - those are added automatically.",
+    messages: [
+      {
+        role: "user",
+        content: [
+          `Business: ${businessName}`,
+          `Contact first name: ${firstName || "unknown (use a generic greeting like 'Hi there')"}`,
+          `City: ${city || "unknown"}`,
+          `Profile: ${JSON.stringify(profile)}`,
+          `Personalized demo link (must appear in the body exactly once, on its own line): ${demoUrl}`,
+          "Angle: when they're on a job and miss a call, the caller usually phones the next business. We built a page showing the exact text their missed callers would get.",
+        ].join("\n"),
+      },
+    ],
+  });
+
+  const text = response.content.find((b) => b.type === "text")?.text ?? "";
+  try {
+    const parsed = JSON.parse(text.replace(/^```(?:json)?\s*|\s*```$/g, ""));
+    if (!parsed.body.includes(demoUrl)) parsed.body += `\n\n${demoUrl}`;
+    return parsed;
+  } catch {
+    return {
+      subject: `missed calls at ${businessName.toLowerCase()}`,
+      body: `Hi${firstName ? " " + firstName : " there"},\n\nWhen you're on a job and can't pick up, most callers don't leave a voicemail. They call the next business on the list.\n\nI put together a page showing the exact text your missed callers would get back from ${businessName}, automatically, within seconds:\n\n${demoUrl}\n\nWorth a look?`,
+    };
+  }
+}
