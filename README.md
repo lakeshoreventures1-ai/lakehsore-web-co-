@@ -4,7 +4,7 @@ Marketing website for CND Digital, a web design & development studio.
 
 Static site — plain HTML, CSS, and JS, no build step or dependencies.
 
-Note: the repo, GitHub Pages URL, email address, and Calendly link still use
+Note: the repo, GitHub Pages URL, and Calendly link still use
 the original "lakeshore" naming — those are technical identifiers tied to
 existing accounts and weren't renamed along with the public brand (CND
 Digital). Nothing customer-facing shows "Lakeshore" anywhere.

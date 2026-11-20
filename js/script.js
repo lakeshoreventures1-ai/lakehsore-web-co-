@@ -90,7 +90,7 @@
           });
         })
         .catch(function () {
-          formNote.textContent = "Something went wrong sending your message. Please email us directly at lakeshoreventures1@gmail.com.";
+          formNote.textContent = "Something went wrong sending your message. Please email us directly at charlie@cnddigital.org.";
           formNote.style.color = "#e8734a";
         })
         .finally(function () {
